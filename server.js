@@ -1,7 +1,11 @@
 
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
 const port = 3000
+
+/*handling all the body parsing*/
+app.use(bodyParser.json());
 
 app.post('/', (req, res) => {
   const email = req.body.email;
