@@ -1,8 +1,8 @@
 var mysql = require('mysql');
 var db_config = {
-    host     : '127.0.0.1',
+    host     : 'localhost',
     user     : 'root',
-    password : 'qwerty123456',
+    password : '$Ho@ib16799.',
     database : 'webapp'
 }
 
