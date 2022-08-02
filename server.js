@@ -8,8 +8,8 @@ const port = 3000
 app.use(bodyParser.json());
 
 app.post('/', (req, res) => {
-  const email = req.body.email;
-  const amount = req.body.amount;
+  var email = req.body.email;
+  var amount = req.body.amount;
 
   res.send({"amount" : amount, "email" : email});
 });
