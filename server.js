@@ -25,7 +25,7 @@ app.post('/post_info',async  (req, res) => {
   res.send(result);
 });
 
-app.get('/get_total_amount',async (req, res) => {
+app.get('/get_info',async (req, res) => {
   var result = await get_total_amount();
   res.send(result);
 });

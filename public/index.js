@@ -2,10 +2,14 @@ class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      'total amount' : 1000,
+      'total_amount' : 1000,
       'amount': 100,
       'email':'' ,
     }
+  }
+  async componentDidMount(){
+    const result = await axios.get('/get_info');
+    this.setState({total_amount : result.data["0"].total_amount});
   }
   onSubmit = async (event) => {
     event.preventDefault();
