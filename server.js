@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 app.post('/',async  (req, res) => {
   var email = req.body.email;
   var amount = req.body.amount;
+
   if(amount <= 1){
     let return_info = {};
     return_info.error = true;
@@ -19,6 +20,11 @@ app.post('/',async  (req, res) => {
     return return_info;
   }
   var result = await save_user_information({"amount" : amount, "email" : email});
+  res.send(result);
+});
+
+app.get('/get_total_amount',async (req, res) => {
+  var result = await get_total_amount();
   res.send(result);
 });
 
