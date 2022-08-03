@@ -15,6 +15,7 @@ class App extends React.Component{
       <form>
       <input placeholder="amount" />
       <input placeholder="email" />
+      <button> participate </button>
       </form>
     </div>
     )
