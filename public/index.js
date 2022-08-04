@@ -8,7 +8,7 @@ class App extends React.Component{
     }
   }
   async componentDidMount(){
-    const result = await axios.get('/get_info');
+    const result = await axios.get('/get_total_amount');
     this.setState({total_amount : result.data["0"].total_amount});
   }
   onSubmit = async (event) => {
@@ -24,7 +24,7 @@ class App extends React.Component{
     <div>
         <h1>Lottery Application 2.0 </h1>
       <div>
-      <p> Total lottery amount is {this.state.total_amount}</p>
+      <p> Total lottery amount is : {this.state.total_amount >0 ? this.state.total_amount : 0}</p>
       </div>
       <form onSubmit={this.onSubmit}>
       <input placeholder="amount" value = {this.state.amount}

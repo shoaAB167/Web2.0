@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const {save_user_information , get_list_of_participants} = require('./model/server_db');
+const {save_user_information , get_list_of_participants, delete_users} = require('./model/server_db');
 const path = require('path');
 const publicPath = path.join(__dirname, './public');
 const paypal = require('paypal-rest-sdk');
@@ -27,7 +27,7 @@ paypal.configure({
  'client_secret': 'ELpBE54aX-xr1zh6nymhnR9OZqbg_bRjtkhFsldyDJ-Tq7jX2PMPCz5tZGuCLlLiBC5cfZ1n1YQYCeu2'
 });
 
-app.post('/post_info',async  (req, res) => {
+app.post('/post_info', async  (req, res) => {
   var email = req.body.email;
   var amount = req.body.amount;
 
@@ -89,7 +89,7 @@ paypal.payment.create(create_payment_json, function (error, payment) {
 });
 });
 
-app.get('/success', (req,res)=>{
+app.get('/success', async (req,res)=>{
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
   var execute_payment_json = {
@@ -111,35 +111,40 @@ app.get('/success', (req,res)=>{
 
       }
   });
+
+//Delete all mysql user
+if(req.session.winner_picked){
+ var deleted =await delete_users();
+}
+  req.session.winner_picked = false;
   res.redirect('http://localhost:3000');
 });
 
-app.get('/get_info',async (req, res) => {
+app.get('/get_total_amount',async (req, res) => {
   var result = await get_total_amount();
   res.send(result);
 });
 
-//Picking winner
+//picking winner
 app.get('/pick_winner', async (req,res)=>{
   var result = await get_total_amount();
   var total_amount = result[0].total_amount;
   req.session.paypal_amount = total_amount;
 
   /* Placeholder for picking the winner ,
+
   1) We need to write a query to get a list of all the participants
   2) we need to pick a winner */
-var list_of_participants = await get_list_of_participants();
-list_of_participants = JSON.parse(JSON.stringify(list_of_participants));
-var email_array = [];
-list_of_participants.forEach(function(element){
-  email_array.push(element.email);
-});
+  var list_of_participants = await get_list_of_participants();
+  list_of_participants = JSON.parse(JSON.stringify(list_of_participants));
+  var email_array = [];
+  list_of_participants.forEach(function(element){
+    email_array.push(element.email);
+  });
 
+  var winner_email = email_array[Math.floor(Math.random()* email_array.length)];
+  req.session.winner_picked = true;
 
-var winner = email_array[Math.floor(Math.random()* email_array.length)];
-console.log(winner);
-
-return true;
   /* Create paypal payment */
   var create_payment_json = {
     "intent": "sale",
@@ -179,13 +184,14 @@ return true;
           console.log(payment);
           for(var i = 0; i< payment.links.length; i++){
             if(payment.links[i].rel =='approval_url'){
-              return res.send(payment.links[i].href);
+              return res.redirect(payment.links[i].href);
             }
           }
       }
     });
 
 });
+
 
 
 
